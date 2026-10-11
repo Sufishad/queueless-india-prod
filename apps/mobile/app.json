@@ -8,7 +8,7 @@
     "icon": "./assets/icon.png",
     "scheme": "queueless",
     "userInterfaceStyle": "light",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",

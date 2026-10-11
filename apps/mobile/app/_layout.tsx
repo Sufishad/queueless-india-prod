@@ -33,14 +33,21 @@ export default function RootLayout() {
   });
 
   const fontsLoaded = spaceGroteskLoaded && plusJakartaLoaded;
+  const [ready, setReady] = React.useState(false);
 
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync().catch(() => {});
+      setReady(true);
     }
+    const timer = setTimeout(() => {
+      SplashScreen.hideAsync().catch(() => {});
+      setReady(true);
+    }, 2000);
+    return () => clearTimeout(timer);
   }, [fontsLoaded]);
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded && !ready) {
     return null;
   }
 
