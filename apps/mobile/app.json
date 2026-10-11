@@ -2,6 +2,7 @@
   "expo": {
     "name": "QueueLess India",
     "slug": "queueless-india",
+    "owner": "sufishad",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -46,6 +47,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "9ed7bfdd-ae4f-4f51-ad6a-046ef7aa2192"
+      }
     }
   }
 }
