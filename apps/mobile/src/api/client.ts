@@ -595,3 +595,52 @@ export async function fetchOwnerAnalytics(
   }
   return res.json();
 }
+
+/**
+ * Google Play Compliance: Permanent Account Deletion & Data Purge
+ */
+export async function purgeOwnerAccount(token: string): Promise<{ status: string; message: string }> {
+  const url = `${API_BASE_URL}/api/v1/auth/purge-account`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!res.ok) {
+    throw new Error('Failed to delete owner account');
+  }
+  return res.json();
+}
+
+export async function purgeCustomerData(mobile: string): Promise<{ status: string; message: string }> {
+  const url = `${API_BASE_URL}/api/v1/auth/customer/purge-data?mobile=${encodeURIComponent(mobile)}`;
+  const res = await fetch(url, {
+    method: 'POST',
+  });
+  if (!res.ok) {
+    throw new Error('Failed to purge customer data');
+  }
+  return res.json();
+}
+
+export async function submitCustomerGrievance(payload: {
+  customer_mobile: string;
+  customer_name?: string;
+  business_id?: string;
+  business_name?: string;
+  issue_type: string;
+  description: string;
+}): Promise<any> {
+  const url = `${API_BASE_URL}/api/v1/admin/grievances`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    throw new Error('Failed to submit grievance');
+  }
+  return res.json();
+}

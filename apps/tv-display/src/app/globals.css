@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-kiosk: #060a14;
+  --surface-kiosk: #0d1527;
+  --border-kiosk: #1e293b;
+  --accent-cyan: #06b6d4;
+  --accent-blue: #3b82f6;
+  --accent-green: #10b981;
+  --accent-amber: #f59e0b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  background-color: var(--bg-kiosk);
+  color: #f8fafc;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+.font-grotesk {
+  font-family: 'Space Grotesk', monospace, sans-serif;
+}
+
+/* Pulsing beacon glow */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 40px rgba(6, 182, 212, 0.4), inset 0 0 20px rgba(6, 182, 212, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 80px rgba(6, 182, 212, 0.7), inset 0 0 30px rgba(6, 182, 212, 0.4);
+  }
+}
+
+.glow-active-token {
+  animation: pulseGlow 2.5s infinite ease-in-out;
+}
+
+@keyframes flashCall {
+  0% { transform: scale(0.96); opacity: 0.8; }
+  50% { transform: scale(1.02); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.call-animation {
+  animation: flashCall 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}

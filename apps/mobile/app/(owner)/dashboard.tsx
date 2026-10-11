@@ -30,6 +30,8 @@ import {
   QrCode,
   Users,
   IndianRupee,
+  Trash2,
+  LogOut,
 } from 'lucide-react-native';
 import { useOwnerStore } from '../../src/store/useOwnerStore';
 import {
@@ -42,6 +44,7 @@ import {
   getWebSocketUrl,
   OwnerDashboardData,
   fetchBusinesses,
+  purgeOwnerAccount,
 } from '../../src/api/client';
 import {
   playNewCustomerAlert,
@@ -61,6 +64,7 @@ export default function OwnerDashboardScreen() {
     setAuth,
     setBusinessId,
     loadOwnerSession,
+    logout,
     isLoading: isStoreLoading,
   } = useOwnerStore();
 
@@ -601,6 +605,53 @@ export default function OwnerDashboardScreen() {
             </Text>
           </TouchableOpacity>
         </View>
+
+        {/* Account & Google Play Compliance Section */}
+        <View style={styles.complianceSection}>
+          <Text style={styles.complianceHeader}>ACCOUNT & DATA COMPLIANCE</Text>
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={() => {
+              logout();
+              router.replace('/role-select');
+            }}
+          >
+            <LogOut size={18} color="#94A3B8" />
+            <Text style={styles.logoutText}>Log Out from Merchant Console</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.deleteAccountButton}
+            onPress={() => {
+              Alert.alert(
+                'Delete Account & Purge Data?',
+                'In compliance with Google Play Store User Data policies, this action will permanently delete your merchant account, queue records, services, and live data. This cannot be undone.',
+                [
+                  { text: 'Cancel', style: 'cancel' },
+                  {
+                    text: 'Permanently Delete',
+                    style: 'destructive',
+                    onPress: async () => {
+                      try {
+                        if (ownerToken) {
+                          await purgeOwnerAccount(ownerToken);
+                        }
+                        logout();
+                        Alert.alert('Account Deleted', 'All data successfully purged.');
+                        router.replace('/role-select');
+                      } catch (err: any) {
+                        Alert.alert('Error', err.message || 'Failed to delete account');
+                      }
+                    },
+                  },
+                ]
+              );
+            }}
+          >
+            <Trash2 size={18} color="#EF4444" />
+            <Text style={styles.deleteAccountText}>Delete Account & Purge All Data</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -1010,5 +1061,51 @@ const styles = StyleSheet.create({
     color: '#64748B',
     fontSize: 11,
     lineHeight: 14,
+  },
+  complianceSection: {
+    marginTop: 24,
+    marginBottom: 40,
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: 'rgba(239, 68, 68, 0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.2)',
+    gap: 12,
+  },
+  complianceHeader: {
+    color: '#94A3B8',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 1.2,
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: '#1E293B',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+  },
+  logoutText: {
+    color: '#F1F5F9',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  deleteAccountButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: 'rgba(239, 68, 68, 0.12)',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.3)',
+  },
+  deleteAccountText: {
+    color: '#EF4444',
+    fontSize: 13,
+    fontWeight: '700',
   },
 });

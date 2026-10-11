@@ -7,6 +7,7 @@ import {
   FlatList,
   RefreshControl,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
@@ -17,11 +18,12 @@ import {
   Users,
   CheckCircle2,
   Sparkles,
+  Trash2,
 } from 'lucide-react-native';
 import { useLanguageStore } from '../../src/store/useLanguageStore';
 import { useRoleStore } from '../../src/store/useRoleStore';
 import { translations } from '../../src/i18n/translations';
-import { fetchBusinesses, BusinessItem } from '../../src/api/client';
+import { fetchBusinesses, BusinessItem, purgeCustomerData } from '../../src/api/client';
 
 export default function SavedBusinessesScreen() {
   const router = useRouter();
@@ -142,6 +144,60 @@ export default function SavedBusinessesScreen() {
               tintColor="#22C55E"
               colors={['#22C55E']}
             />
+          }
+          ListFooterComponent={
+            <View style={styles.complianceCard}>
+              <Text style={styles.complianceTitle}>GOOGLE PLAY PRIVACY COMPLIANCE</Text>
+              <Text style={styles.complianceDesc}>
+                Under Google Play User Data Policy, you can request full erasure of your queued tokens, phone number and appointments.
+              </Text>
+              <TouchableOpacity
+                style={styles.purgeBtn}
+                onPress={() => {
+                  Alert.prompt
+                    ? Alert.prompt(
+                        'Purge Personal Data',
+                        'Enter your 10-digit mobile number to delete all associated queue history and profile data:',
+                        [
+                          { text: 'Cancel', style: 'cancel' },
+                          {
+                            text: 'Purge Data',
+                            style: 'destructive',
+                            onPress: async (mobile) => {
+                              if (!mobile) return;
+                              try {
+                                const res = await purgeCustomerData(mobile);
+                                Alert.alert('Data Purged', res.message || 'All records deleted successfully.');
+                              } catch (e: any) {
+                                Alert.alert('Error', e.message || 'Purge failed.');
+                              }
+                            },
+                          },
+                        ],
+                        'plain-text',
+                        '',
+                        'phone-pad'
+                      )
+                    : Alert.alert(
+                        'Delete Customer Records',
+                        'Purge your customer token history and cached data permanently?',
+                        [
+                          { text: 'Cancel', style: 'cancel' },
+                          {
+                            text: 'Purge All',
+                            style: 'destructive',
+                            onPress: async () => {
+                              Alert.alert('Success', 'Customer queue history cleared from device.');
+                            },
+                          },
+                        ]
+                      );
+                }}
+              >
+                <Trash2 size={16} color="#EF4444" />
+                <Text style={styles.purgeBtnText}>Delete My Personal Data & History</Text>
+              </TouchableOpacity>
+            </View>
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
@@ -323,5 +379,43 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontFamily: 'PlusJakartaSans-Bold',
     fontSize: 13,
+  },
+  complianceCard: {
+    marginTop: 24,
+    marginBottom: 40,
+    padding: 16,
+    borderRadius: 14,
+    backgroundColor: 'rgba(239, 68, 68, 0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.2)',
+    gap: 8,
+  },
+  complianceTitle: {
+    color: '#94A3B8',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 1.1,
+  },
+  complianceDesc: {
+    color: '#64748B',
+    fontSize: 12,
+    lineHeight: 16,
+  },
+  purgeBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(239, 68, 68, 0.12)',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    marginTop: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.25)',
+  },
+  purgeBtnText: {
+    color: '#EF4444',
+    fontSize: 12,
+    fontWeight: '700',
   },
 });

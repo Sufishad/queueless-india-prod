@@ -22,3 +22,9 @@ Thumbs.db
 # Local envs
 .env
 *.local
+
+# Next.js
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts

@@ -118,3 +118,58 @@ async def login_owner(
 @router.get("/me", response_model=OwnerResponse)
 async def get_me(current_owner: dict = Depends(get_current_owner)):
     return OwnerResponse(**serialize_owner(current_owner))
+
+@router.delete("/me", status_code=status.HTTP_200_OK)
+@router.post("/purge-account", status_code=status.HTTP_200_OK)
+async def purge_owner_account(
+    current_owner: dict = Depends(get_current_owner),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Google Play Compliance: Delete owner account and purge all business and queue data.
+    """
+    owner_id = current_owner.get("_id")
+    biz_ids = current_owner.get("business_ids", [])
+
+    # Delete or deactivate businesses
+    for b_id in biz_ids:
+        b_obj = ObjectId(b_id) if ObjectId.is_valid(b_id) else None
+        if b_obj:
+            await db.businesses.delete_one({"_id": b_obj})
+            await db.queues.delete_many({"business_id": b_id})
+            await db.services.delete_many({"business_id": b_id})
+            await db.counters.delete_many({"business_id": b_id})
+            await db.appointments.delete_many({"business_id": b_id})
+
+    # Delete owner
+    await db.owners.delete_one({"_id": owner_id})
+
+    return {
+        "status": "purged",
+        "message": "Account and all associated business data permanently deleted in compliance with Google Play policies."
+    }
+
+@router.post("/customer/purge-data", status_code=status.HTTP_200_OK)
+async def purge_customer_data(
+    mobile: str,
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Google Play Compliance: Anonymize or purge customer queue tokens and appointments.
+    """
+    cleaned_mobile = mobile.strip().replace(" ", "").replace("-", "")
+    if cleaned_mobile.startswith("+91"):
+        cleaned_mobile = cleaned_mobile[3:]
+    
+    # Remove customer queue entries & appointments
+    queue_res = await db.queues.delete_many({"customer_mobile": cleaned_mobile})
+    queue_entries_res = await db.queue_entries.delete_many({"$or": [{"customerMobile": cleaned_mobile}, {"customer_mobile": cleaned_mobile}]})
+    appt_res = await db.appointments.delete_many({"$or": [{"customer_mobile": cleaned_mobile}, {"customerMobile": cleaned_mobile}]})
+
+    return {
+        "status": "purged",
+        "mobile": cleaned_mobile,
+        "purged_tokens_count": queue_res.deleted_count + queue_entries_res.deleted_count,
+        "purged_appointments_count": appt_res.deleted_count,
+        "message": "All personal queue tokens and customer data purged successfully in compliance with Google Play Store policies."
+    }

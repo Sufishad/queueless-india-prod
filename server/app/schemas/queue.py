@@ -10,6 +10,8 @@ class JoinQueueRequest(BaseModel):
     service_id: Optional[str] = Field(default=None, alias="serviceId")
     customer_id: Optional[str] = Field(default=None, alias="customerId", description="Client device session ID")
 
+    model_config = {"populate_by_name": True}
+
     @field_validator("customer_mobile")
     @classmethod
     def clean_mobile(cls, v: str) -> str:
