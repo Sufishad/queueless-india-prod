@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.api import api_router
+from app.api.v1.endpoints import websocket
 from app.core.config import settings
 from app.core.database import close_mongo_connection, connect_to_mongo
 
@@ -36,6 +37,9 @@ app.add_middleware(
 
 # API v1 routes
 app.include_router(api_router, prefix=settings.API_V1_STR)
+# WebSocket routes
+app.include_router(websocket.router)
+app.include_router(websocket.router, prefix=settings.API_V1_STR)
 
 
 @app.get("/health", tags=["system"])

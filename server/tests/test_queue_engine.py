@@ -9,34 +9,6 @@ from app.core.exceptions import (
 )
 
 
-@pytest.fixture
-async def setup_test_business(mock_db):
-    biz_doc = {
-        "_id": "biz_test_clinic",
-        "name": "Dr. Verma Clinic",
-        "category": "Clinic",
-        "address": "Connaught Place, New Delhi",
-        "location": {"type": "Point", "coordinates": [77.2167, 28.6448]},
-        "status": "open",
-        "queueStatus": "active",
-        "plan": "starter",
-        "verified": True
-    }
-    await mock_db.businesses.insert_one(biz_doc)
-
-    service_doc = {
-        "_id": "srv_dentist",
-        "businessId": "biz_test_clinic",
-        "name": "Dental Checkup",
-        "price": 450.0,
-        "estimatedDuration": 20,
-        "active": True
-    }
-    await mock_db.services.insert_one(service_doc)
-
-    return {"business_id": "biz_test_clinic", "service_id": "srv_dentist"}
-
-
 @pytest.mark.asyncio
 async def test_zero_friction_token_booking(mock_db, setup_test_business):
     biz_id = setup_test_business["business_id"]

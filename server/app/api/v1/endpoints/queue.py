@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, Header, status
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from app.api.deps import get_customer_session_id, get_database, get_owner_authorization
+from app.core.websocket_manager import ws_manager
 from app.schemas.queue import (
     CallNextRequest,
     CancelTokenRequest,
@@ -40,6 +41,8 @@ async def join_queue(
         request=payload,
         customer_session_id=customer_session_id
     )
+    # Broadcast live state & turn approaching alerts
+    await ws_manager.notify_queue_state_changed(db, business_id)
     return entry
 
 
@@ -98,6 +101,7 @@ async def call_next_customer(
     )
     if not next_entry:
         return {"message": "No customers currently waiting in the queue.", "entry": None}
+    await ws_manager.notify_queue_state_changed(db, business_id)
     return {"message": f"Called Token #{next_entry['tokenNumber']}", "entry": next_entry}
 
 
@@ -118,6 +122,7 @@ async def complete_token(
         entry_id=entry_id,
         counter_id=counter_id
     )
+    await ws_manager.notify_queue_state_changed(db, business_id)
     return {"message": "Token completed successfully.", "entry": entry}
 
 
@@ -138,6 +143,7 @@ async def skip_token(
         entry_id=entry_id,
         reason=reason
     )
+    await ws_manager.notify_queue_state_changed(db, business_id)
     return {"message": "Token skipped.", "entry": entry}
 
 
@@ -167,6 +173,7 @@ async def cancel_token(
         is_owner=is_owner,
         reason=reason
     )
+    await ws_manager.notify_queue_state_changed(db, business_id)
     return {"message": "Token cancelled successfully.", "entry": entry}
 
 
@@ -193,4 +200,5 @@ async def generate_walk_in_token(
         request=join_payload,
         customer_session_id="walk-in-terminal"
     )
+    await ws_manager.notify_queue_state_changed(db, business_id)
     return entry
