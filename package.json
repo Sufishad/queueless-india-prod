@@ -1,0 +1,26 @@
+{
+  "name": "queueless-india",
+  "version": "0.1.0",
+  "private": true,
+  "description": "QueueLess India (क्यूलेस इंडिया) - Zero-Friction Real-time Queue Management Monorepo",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:server": "cd server && uv run uvicorn app.main:app --reload --port 8000",
+    "test:server": "cd server && uv run pytest -v"
+  },
+  "keywords": [
+    "queueless",
+    "queue-management",
+    "india",
+    "fastapi",
+    "react-native",
+    "expo",
+    "motor",
+    "mongodb"
+  ],
+  "author": "QueueLess India Team",
+  "license": "UNLICENSED"
+}
