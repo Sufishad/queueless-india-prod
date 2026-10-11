@@ -4,8 +4,7 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@queueless/types": ["../../packages/types/src/index.ts", "../../packages/types/index.ts"]
+      "@/*": ["./src/*"]
     }
   },
   "include": [
