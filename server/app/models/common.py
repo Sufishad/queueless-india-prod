@@ -45,31 +45,51 @@ class GeoPoint(BaseModel):
     coordinates: List[float] = Field(..., min_length=2, max_length=2)  # [longitude, latitude]
 
 
-class QueueStatus(str, Enum):
-    ACTIVE = "active"
-    PAUSED = "paused"
+class UpperStr(str):
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return self.upper() == other.upper()
+        return super().__eq__(other)
+
+    def __hash__(self):
+        return hash(self.upper())
 
 
-class BusinessStatus(str, Enum):
-    OPEN = "open"
-    CLOSED = "closed"
+class CaseInsensitiveEnum(UpperStr, Enum):
+    @classmethod
+    def _missing_(cls, value: object):
+        if isinstance(value, str):
+            for member in cls:
+                if member.value.upper() == value.upper():
+                    return member
+        return None
 
 
-class BusinessPlan(str, Enum):
+class QueueStatus(CaseInsensitiveEnum):
+    ACTIVE = "ACTIVE"
+    PAUSED = "PAUSED"
+
+
+class BusinessStatus(CaseInsensitiveEnum):
+    OPEN = "OPEN"
+    CLOSED = "CLOSED"
+
+
+class BusinessPlan(CaseInsensitiveEnum):
     FREE = "free"
     STARTER = "starter"
     PRO = "pro"
     ENTERPRISE = "enterprise"
 
 
-class QueueEntryStatus(str, Enum):
-    WAITING = "waiting"
-    SERVING = "serving"
-    COMPLETED = "completed"
-    SKIPPED = "skipped"
-    CANCELLED = "cancelled"
+class QueueEntryStatus(CaseInsensitiveEnum):
+    WAITING = "WAITING"
+    SERVING = "SERVING"
+    COMPLETED = "COMPLETED"
+    SKIPPED = "SKIPPED"
+    CANCELLED = "CANCELLED"
 
 
-class PaymentStatus(str, Enum):
-    UNPAID = "unpaid"
-    PAID = "paid"
+class PaymentStatus(CaseInsensitiveEnum):
+    UNPAID = "UNPAID"
+    PAID = "PAID"
