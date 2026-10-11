@@ -40,6 +40,52 @@ export interface TranslationSchema {
     turnNearAlert: string;
     noOtpNotice: string;
   };
+  customer: {
+    locationLabel: string;
+    searchPlaceholder: string;
+    categories: {
+      all: string;
+      clinic: string;
+      salon: string;
+      bank: string;
+      restaurant: string;
+      retail: string;
+    };
+    activeTokenBanner: string;
+    viewLiveToken: string;
+    peopleAhead: string;
+    minsWait: string;
+    servicesOffered: string;
+    price: string;
+    duration: string;
+    enterName: string;
+    enterMobile: string;
+    mobileHelper: string;
+    invalidMobileError: string;
+    nameRequiredError: string;
+    serviceRequiredError: string;
+    instantBooking: string;
+    zeroOtpGuarantee: string;
+    payUpi: string;
+    scanToPay: string;
+    leaveQueueConfirm: string;
+    leaveQueueWarning: string;
+    offlineQrNotice: string;
+    tabs: {
+      explore: string;
+      myQueues: string;
+      saved: string;
+    };
+    status: {
+      active: string;
+      completed: string;
+      cancelled: string;
+      serving: string;
+    };
+    emptyBusinesses: string;
+    emptySaved: string;
+    emptyQueues: string;
+  };
   languages: {
     en: string;
     hi: string;
@@ -88,6 +134,52 @@ export const translations: Record<LanguageCode, TranslationSchema> = {
       turnNearAlert: 'Your turn is approaching! Please be near the counter.',
       noOtpNotice: 'Only Name + Mobile required. No SMS OTP wait.',
     },
+    customer: {
+      locationLabel: 'Current Location',
+      searchPlaceholder: 'Search clinic, salon, doctor, restaurant...',
+      categories: {
+        all: 'All',
+        clinic: 'Clinic',
+        salon: 'Salon',
+        bank: 'Bank / e-Lobby',
+        restaurant: 'Restaurant',
+        retail: 'Retail / Store',
+      },
+      activeTokenBanner: 'You have an Active Token',
+      viewLiveToken: 'Track Live',
+      peopleAhead: 'ahead',
+      minsWait: 'mins wait',
+      servicesOffered: 'Available Services',
+      price: 'Price',
+      duration: 'Duration',
+      enterName: 'Your Name',
+      enterMobile: '10-digit Indian Mobile',
+      mobileHelper: 'Starting with 6, 7, 8, or 9 (No OTP needed)',
+      invalidMobileError: 'Please enter a valid 10-digit Indian mobile (starts with 6-9)',
+      nameRequiredError: 'Please enter your name',
+      serviceRequiredError: 'Please select at least one service',
+      instantBooking: 'Get Instant Token',
+      zeroOtpGuarantee: '100% OTP-Free • Instant Confirmed Token',
+      payUpi: 'Pay with any UPI App',
+      scanToPay: 'Scan QR to Pay at Counter',
+      leaveQueueConfirm: 'Leave this Queue?',
+      leaveQueueWarning: 'Your token will be cancelled and you will lose your spot in line.',
+      offlineQrNotice: 'Saved locally. Show this QR at the counter even without internet.',
+      tabs: {
+        explore: 'Explore',
+        myQueues: 'My Queues',
+        saved: 'Saved',
+      },
+      status: {
+        active: 'Active',
+        completed: 'Completed',
+        cancelled: 'Cancelled',
+        serving: 'Now Serving',
+      },
+      emptyBusinesses: 'No businesses found matching your criteria.',
+      emptySaved: 'No saved businesses yet. Tap the bookmark icon on any store to save it here.',
+      emptyQueues: 'You have not joined any queues yet.',
+    },
     languages: {
       en: 'English (Default)',
       hi: 'हिन्दी (Hindi)',
@@ -134,6 +226,52 @@ export const translations: Record<LanguageCode, TranslationSchema> = {
       turnNearAlert: 'आपका नंबर आने वाला है! कृपया काउंटर के पास रहें।',
       noOtpNotice: 'केवल नाम और मोबाइल नंबर। कोई ओटीपी की झंझट नहीं।',
     },
+    customer: {
+      locationLabel: 'वर्तमान स्थान',
+      searchPlaceholder: 'क्लिनिक, सैलून, डॉक्टर, रेस्टोरेंट खोजें...',
+      categories: {
+        all: 'सभी',
+        clinic: 'क्लिनिक',
+        salon: 'सैलून',
+        bank: 'बैंक / कियोस्क',
+        restaurant: 'रेस्टोरेंट / कैफ़े',
+        retail: 'दुकान / रिटेल',
+      },
+      activeTokenBanner: 'आपका टोकन सक्रिय है',
+      viewLiveToken: 'लाइव देखें',
+      peopleAhead: 'आगे हैं',
+      minsWait: 'मिनट शेष',
+      servicesOffered: 'उपलब्ध सेवाएं',
+      price: 'कीमत',
+      duration: 'समय',
+      enterName: 'आपका शुभ नाम',
+      enterMobile: '10-अंकों का मोबाइल नंबर',
+      mobileHelper: '6, 7, 8 या 9 से शुरू (कोई OTP नहीं)',
+      invalidMobileError: 'कृपया 10-अंकों का वैध भारतीय मोबाइल नंबर डालें (6-9 से शुरू)',
+      nameRequiredError: 'कृपया अपना नाम दर्ज करें',
+      serviceRequiredError: 'कृपया कम से कम एक सेवा चुनें',
+      instantBooking: 'तुरंत टोकन लें',
+      zeroOtpGuarantee: '100% बिना OTP • 1 सेकंड में टोकन कन्फर्म',
+      payUpi: 'किसी भी UPI ऐप से भुगतान करें',
+      scanToPay: 'काउंटर पर भुगतान के लिए QR स्कैन करें',
+      leaveQueueConfirm: 'क्या आप कतार छोड़ना चाहते हैं?',
+      leaveQueueWarning: 'आपका टोकन रद्द हो जाएगा और आप कतार में अपना स्थान खो देंगे।',
+      offlineQrNotice: 'यह टोकन सुरक्षित है। इंटरनेट न होने पर भी काउंटर पर यह QR दिखाएं।',
+      tabs: {
+        explore: 'खोजें',
+        myQueues: 'मेरी कतारें',
+        saved: 'पसंदीदा',
+      },
+      status: {
+        active: 'सक्रिय',
+        completed: 'पूर्ण',
+        cancelled: 'रद्द',
+        serving: 'काउंटर पर',
+      },
+      emptyBusinesses: 'आपकी खोज के अनुसार कोई दुकान नहीं मिली।',
+      emptySaved: 'अभी कोई पसंदीदा दुकान नहीं है। किसी भी दुकान पर बुकमार्क दबाएं।',
+      emptyQueues: 'आपने अभी तक कोई टोकन नहीं लिया है।',
+    },
     languages: {
       en: 'English (अंग्रेज़ी)',
       hi: 'हिन्दी (Hindi)',
@@ -179,6 +317,52 @@ export const translations: Record<LanguageCode, TranslationSchema> = {
       skip: 'Customer Skip Karein',
       turnNearAlert: 'Aapka number aane wala hai! Please counter ke paas rahein.',
       noOtpNotice: 'Sirf Name + Mobile Number. SMS OTP ka koi wait nahi.',
+    },
+    customer: {
+      locationLabel: 'Current Location',
+      searchPlaceholder: 'Clinic, salon, doctor, restaurant search karein...',
+      categories: {
+        all: 'All',
+        clinic: 'Clinic',
+        salon: 'Salon',
+        bank: 'Bank / Kiosk',
+        restaurant: 'Restaurant / Cafe',
+        retail: 'Store / Dukaan',
+      },
+      activeTokenBanner: 'Aapka Active Token Chalu Hai',
+      viewLiveToken: 'Live Track Karein',
+      peopleAhead: 'aage hain',
+      minsWait: 'min bache hain',
+      servicesOffered: 'Available Services',
+      price: 'Price',
+      duration: 'Time',
+      enterName: 'Aapka Name',
+      enterMobile: '10-digit Mobile Number',
+      mobileHelper: '6, 7, 8 ya 9 se shuru (Koi OTP nahi)',
+      invalidMobileError: 'Please valid 10-digit Indian mobile number enter karein (starts with 6-9)',
+      nameRequiredError: 'Please apna name enter karein',
+      serviceRequiredError: 'Please kam se kam ek service select karein',
+      instantBooking: 'Instant Token Payein',
+      zeroOtpGuarantee: '100% No-OTP • 1 Second Instant Confirmation',
+      payUpi: 'Kisi bhi UPI App se Pay Karein',
+      scanToPay: 'Counter par Pay karne ke liye QR scan karein',
+      leaveQueueConfirm: 'Kya aap Line Chhodna Chahte Hain?',
+      leaveQueueWarning: 'Aapka token cancel ho jayega aur line mein jagah chhoot jayegi.',
+      offlineQrNotice: 'Offline saved token. Net na hone par bhi counter par ye QR dikhayein.',
+      tabs: {
+        explore: 'Explore',
+        myQueues: 'Meri Queues',
+        saved: 'Saved Shops',
+      },
+      status: {
+        active: 'Active',
+        completed: 'Completed',
+        cancelled: 'Cancelled',
+        serving: 'Now Serving',
+      },
+      emptyBusinesses: 'Koi business nahi mila. Search query badal kar dekhein.',
+      emptySaved: 'Abhi koi saved business nahi hai. Shop par bookmark tap karke save karein.',
+      emptyQueues: 'Aapne abhi tak koi token join nahi kiya hai.',
     },
     languages: {
       en: 'English (अंग्रेज़ी)',

@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import APIRouter, Depends, Header, status
+from fastapi import APIRouter, Depends, Header, Query, status
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from app.api.deps import get_customer_session_id, get_database, get_owner_authorization
@@ -14,7 +14,7 @@ from app.schemas.queue import (
     SkipTokenRequest,
     WalkInTokenRequest,
 )
-from app.services.queue_engine import QueueEngine
+from app.services.queue_engine import QueueEngine, to_id_query
 
 router = APIRouter()
 
@@ -177,6 +177,109 @@ async def cancel_token(
     return {"message": "Token cancelled successfully.", "entry": entry}
 
 
+@router.get(
+    "/tokens/user/list",
+    summary="List Customer Tokens (Active, Completed, Cancelled)"
+)
+async def list_user_tokens(
+    mobile: Optional[str] = None,
+    session_id: Optional[str] = None,
+    filter_status: Optional[str] = Query(None, alias="status"),
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    customer_session_id: Optional[str] = Depends(get_customer_session_id),
+):
+    """
+    Returns tokens belonging to customer by mobile or device session ID.
+    Supports filtering by WAITING, SERVING, COMPLETED, CANCELLED.
+    """
+    sid = session_id or customer_session_id
+    query_clauses = []
+    if mobile and mobile.strip():
+        # Strip prefixes
+        cleaned_mobile = mobile.replace("+91", "").replace(" ", "").strip()
+        query_clauses.append({"customerMobile": cleaned_mobile})
+    if sid:
+        query_clauses.append({"customerId": sid})
+
+    if not query_clauses:
+        return []
+
+    filter_query: dict = {"$or": query_clauses} if len(query_clauses) > 1 else query_clauses[0]
+
+    if filter_status:
+        filter_query["status"] = filter_status.upper()
+
+    cursor = db.queue_entries.find(filter_query).sort("createdAt", -1).limit(50)
+    tokens = []
+    async for entry in cursor:
+        biz_id = entry.get("businessId")
+        biz = await db.businesses.find_one(to_id_query(biz_id)) if biz_id else None
+        q_state = await db.queue_state.find_one({"businessId": biz_id}) if biz_id else None
+
+        entry["_id"] = str(entry["_id"])
+        entry["id"] = entry["_id"]
+        entry["businessName"] = biz.get("name", "Unknown Business") if biz else "Unknown Business"
+        entry["businessAddress"] = biz.get("address", "") if biz else ""
+        entry["businessUpiId"] = (biz.get("upi_id") or biz.get("upiId")) if biz else None
+        entry["currentToken"] = q_state.get("currentToken", 0) if q_state else 0
+
+        # Calculate live people ahead if waiting
+        if entry.get("status") == "WAITING":
+            people_ahead = await db.queue_entries.count_documents({
+                "businessId": biz_id,
+                "status": "WAITING",
+                "tokenNumber": {"$lt": entry.get("tokenNumber", 0)}
+            })
+            entry["peopleAhead"] = people_ahead
+            entry["estimatedWaitMin"] = people_ahead * 10
+        else:
+            entry["peopleAhead"] = 0
+            entry["estimatedWaitMin"] = 0
+
+        tokens.append(entry)
+
+    return tokens
+
+
+@router.get(
+    "/token/{entry_id}/live",
+    summary="Get Token Live Status by Entry ID alone"
+)
+async def get_token_by_id_live(
+    entry_id: str,
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    entry = await db.queue_entries.find_one(to_id_query(entry_id))
+    if not entry:
+        from app.core.exceptions import TokenNotFoundException
+        raise TokenNotFoundException(entry_id=entry_id)
+
+    biz_id = entry.get("businessId")
+    biz = await db.businesses.find_one(to_id_query(biz_id)) if biz_id else None
+    q_state = await db.queue_state.find_one({"businessId": biz_id}) if biz_id else None
+
+    entry["_id"] = str(entry["_id"])
+    entry["id"] = entry["_id"]
+    entry["businessName"] = biz.get("name", "Unknown Business") if biz else "Unknown Business"
+    entry["businessAddress"] = biz.get("address", "") if biz else ""
+    entry["businessUpiId"] = (biz.get("upi_id") or biz.get("upiId")) if biz else None
+    entry["currentToken"] = q_state.get("currentToken", 0) if q_state else 0
+
+    if entry.get("status") == "WAITING":
+        people_ahead = await db.queue_entries.count_documents({
+            "businessId": biz_id,
+            "status": "WAITING",
+            "tokenNumber": {"$lt": entry.get("tokenNumber", 0)}
+        })
+        entry["peopleAhead"] = people_ahead
+        entry["estimatedWaitMin"] = people_ahead * 10
+    else:
+        entry["peopleAhead"] = 0
+        entry["estimatedWaitMin"] = 0
+
+    return entry
+
+
 @router.post(
     "/{business_id}/queue/walk-in",
     response_model=JoinQueueResponse,
@@ -202,3 +305,5 @@ async def generate_walk_in_token(
     )
     await ws_manager.notify_queue_state_changed(db, business_id)
     return entry
+
+
