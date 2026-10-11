@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 
-// Use local machine IP/localhost depending on platform
-const DEFAULT_HOST = Platform.OS === 'android' ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
+// Production Live Host
+const DEFAULT_HOST = 'https://api.mahira-traders.com';
 export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || DEFAULT_HOST;
 
 export interface BusinessItem {

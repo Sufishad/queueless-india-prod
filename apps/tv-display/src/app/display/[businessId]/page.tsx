@@ -14,7 +14,7 @@ import type {
   KioskLanguage,
 } from '@/lib/kioskTypes';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.mahira-traders.com';
 
 async function fetchQueueState(businessId: string): Promise<QueueStateSnapshot | null> {
   try {

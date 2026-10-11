@@ -42,7 +42,7 @@ interface CategoryItem {
   display_order: number;
 }
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://api.mahira-traders.com';
 const ADMIN_KEY = 'queueless-super-secret-admin-2025';
 
 export default function AdminDashboard() {
