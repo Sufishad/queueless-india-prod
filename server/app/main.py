@@ -43,6 +43,7 @@ app.include_router(websocket.router, prefix=settings.API_V1_STR)
 
 
 @app.get("/health", tags=["system"])
+@app.get("/healthz", tags=["system"])
 async def health_check():
     return {
         "status": "healthy",
