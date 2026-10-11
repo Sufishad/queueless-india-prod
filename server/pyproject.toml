@@ -10,6 +10,7 @@ dependencies = [
     "motor>=3.6.0",
     "pydantic>=2.8.0",
     "pydantic-settings>=2.4.0",
+    "pyjwt>=2.15.1",
 ]
 
 [project.optional-dependencies]

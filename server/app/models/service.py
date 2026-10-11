@@ -20,7 +20,7 @@ class Service(BaseModel):
 class ServiceCreate(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
-    business_id: str = Field(..., alias="businessId")
+    business_id: Optional[str] = Field(default=None, alias="businessId")
     name: str = Field(..., min_length=1, max_length=100)
     price: float = Field(..., ge=0)
     estimated_duration: int = Field(default=15, ge=1, le=480, alias="estimatedDuration")
