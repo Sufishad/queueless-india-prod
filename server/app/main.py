@@ -35,11 +35,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# API v1 routes
+# API routes (support both /api/v1 and /api for cross-compatibility)
 app.include_router(api_router, prefix=settings.API_V1_STR)
+app.include_router(api_router, prefix="/api")
 # WebSocket routes
 app.include_router(websocket.router)
 app.include_router(websocket.router, prefix=settings.API_V1_STR)
+app.include_router(websocket.router, prefix="/api")
 
 
 @app.get("/health", tags=["system"])
