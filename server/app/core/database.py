@@ -22,6 +22,12 @@ async def get_db() -> AsyncIOMotorDatabase:
 
 async def connect_to_mongo():
     logger.info(f"Connecting to MongoDB at {settings.MONGODB_URI}")
+    try:
+        import dns.resolver
+        dns.resolver.default_resolver = dns.resolver.Resolver()
+        dns.resolver.default_resolver.nameservers = ['8.8.8.8', '1.1.1.1']
+    except Exception:
+        pass
     db_manager.client = AsyncIOMotorClient(settings.MONGODB_URI)
     db_manager.db = db_manager.client[settings.DATABASE_NAME]
     await init_db_indexes()
